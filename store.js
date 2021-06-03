@@ -21,7 +21,6 @@ export const createStore = (reducer) => {
      * 
      * @returns unsubscribe - stop listening to the state change */
     const subscribe = (listener) => {
-        console.log(listeners);
 
         listeners = listeners.concat([listener]);
 
