@@ -1,19 +1,13 @@
-import { createStore, combineReducers } from 'redux'
-import { appReducer } from './app-reducer';
-import { ADD_GOAL, REMOVE_GOAL } from './goals/goal-reducer';
-import { ADD_TODO,TOGGLE_TODO,REMOVE_TODO } from './todos/todoReducer';
-import { generateId,createRemoveButton } from './utils'
-import {todos} from './todos/todoReducer'
-import {goals} from './goals/goal-reducer'
+import { createStore } from './src/store'
+import { appReducer } from './src/app-reducer';
+import { ADD_GOAL, REMOVE_GOAL } from './src/goals/goal-reducer';
+import { ADD_TODO,TOGGLE_TODO,REMOVE_TODO } from './src/todos/todoReducer';
+import { generateId,createRemoveButton } from './src/utils'
 
-const store = createStore(combineReducers({
-    todos,
-    goals
-}));
+const store = createStore(appReducer);
 
 store.subscribe(()=>{
     const {goals,todos} = store.getState();
-
     document.getElementById('todos').innerHTML = ''
     document.getElementById('goals').innerHTML = ''   
     todos.forEach(addTodoToDom);
@@ -72,7 +66,7 @@ function addTodo () {
     if(!name || name.trim() === "") return;
     input.value = ''
   
-    store.dispatch(addTodoAction({
+    checkAndDispatch(store,addTodoAction({
       name,
       complete: false,
       id: generateId()
@@ -88,7 +82,7 @@ function addGoal(){
     if(!name || name.trim() === "") return;
     input.value = ''
 
-    store.dispatch(addGoalAction({
+    checkAndDispatch(store,addGoalAction({
         name,
         complete:false,
         id: generateId()
@@ -126,6 +120,24 @@ function addGoalToDom(goal){
     node.appendChild(removeBtn)
 
     document.getElementById('goals').appendChild(node)
+}
+
+/**
+ * check the action to some rules before dispatch
+ * @param  store - redux store 
+ * @param  action - action 
+ */
+function checkAndDispatch(store,action){
+    if(action.type === ADD_TODO && action.todo.name.toLowerCase().includes('bitcoin')){
+        return alert('it\'s a bad idea');
+    }
+
+
+    if(action.type === ADD_GOAL && action.goal.name.toLowerCase().includes('bitcoin')){
+        return alert('it\'s a bad idea');
+    }
+    
+    return store.dispatch(action);
 }
 
 document.getElementById('todoBtn').addEventListener('click', addTodo)

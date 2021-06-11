@@ -1,13 +1,21 @@
-import { createStore } from './store'
-import { appReducer } from './app-reducer';
-import { ADD_GOAL, REMOVE_GOAL } from './goals/goal-reducer';
-import { ADD_TODO,TOGGLE_TODO,REMOVE_TODO } from './todos/todoReducer';
-import { generateId,createRemoveButton } from './utils'
+import { createStore, combineReducers, applyMiddleware } from 'redux'
+import { appReducer } from './src/app-reducer';
+import { ADD_GOAL, REMOVE_GOAL } from './src/goals/goal-reducer';
+import { ADD_TODO,TOGGLE_TODO,REMOVE_TODO } from './src/todos/todoReducer';
+import { generateId,createRemoveButton } from './src/utils'
+import {todos} from './src/todos/todoReducer'
+import {goals} from './src/goals/goal-reducer'
+import {logger,checker} from './src/middlewares'
 
-const store = createStore(appReducer);
+const store = createStore(combineReducers({
+    todos,
+    goals
+}),applyMiddleware(checker,logger));
+
 
 store.subscribe(()=>{
     const {goals,todos} = store.getState();
+
     document.getElementById('todos').innerHTML = ''
     document.getElementById('goals').innerHTML = ''   
     todos.forEach(addTodoToDom);
