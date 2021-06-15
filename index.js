@@ -1,3 +1,5 @@
+import React , { Component } from 'react'
+import ReactDOM from 'react-dom'
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import { appReducer } from './src/app-reducer';
 import { ADD_GOAL, REMOVE_GOAL } from './src/goals/goal-reducer';
@@ -6,7 +8,7 @@ import { generateId,createRemoveButton } from './src/utils'
 import {todos} from './src/todos/todoReducer'
 import {goals} from './src/goals/goal-reducer'
 import {logger,checker} from './src/middlewares'
-
+import App from './src/components/App'
 const store = createStore(combineReducers({
     todos,
     goals
@@ -32,32 +34,35 @@ const unsubscribe = store.subscribe(() => {
 unsubscribe();
 
 // Actions creator
-const addTodoAction = (todo) => {
+export const addTodoAction = (todo) => {
     return ({
         type:ADD_TODO,
         todo
     })
 }
-const toggleTodoAction = (id) => {
+
+export const toggleTodoAction = (id) => {
     return ({
         type:TOGGLE_TODO,
         id
     })
 }
-const removeTodoAction = (id) => {
+
+export const removeTodoAction = (id) => {
     return ({
         type:REMOVE_TODO,
         id
     })
 }
 
-const addGoalAction = (goal) => {
+export const addGoalAction = (goal) => {
     return ({
         type:ADD_GOAL,
         goal
     })
 }
-const removeGoalAction = (id) => {
+
+export const removeGoalAction = (id) => {
     return ({
         type:REMOVE_GOAL,
         id
@@ -86,7 +91,7 @@ function addTodo () {
 function addGoal(){
     const input = document.getElementById('goalName')
     const name = input.value
-    //valiate
+    //validate
     if(!name || name.trim() === "") return;
     input.value = ''
 
@@ -133,3 +138,6 @@ function addGoalToDom(goal){
 document.getElementById('todoBtn').addEventListener('click', addTodo)
 document.getElementById('goalBtn').addEventListener('click', addGoal)
 
+// React component
+
+ReactDOM.render(<App store={store}/>,document.getElementById('app'))
